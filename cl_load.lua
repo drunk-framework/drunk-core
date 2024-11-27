@@ -1,2 +1,1 @@
-Drunk = {}
 Drunk.Player = {}

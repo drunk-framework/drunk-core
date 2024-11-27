@@ -94,19 +94,19 @@ Drunk.Player.LoadPlayer = function(source, data)
             return self.Functions.setJobRank(job, grade)
         end
 
-        if not Drunk.Jobs[job] then
+        if not Drunk.Configs.Jobs[job] then
             return false
         end
 
-        if not Drunk.Jobs[job].ranks[grade] then
+        if not Drunk.Configs.Jobs[job].ranks[grade] then
             return false
         end
         
         self.jobs[job] = {
             grade = grade,
             onDuty = false,
-            name = Drunk.Jobs[job].name,
-            label = Drunk.Jobs[job].label,
+            name = Drunk.Configs.Jobs[job].name,
+            label = Drunk.Configs.Jobs[job].label,
         }
 
         self.Functions.UpdateData()

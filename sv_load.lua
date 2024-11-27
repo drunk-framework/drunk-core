@@ -1,1 +1,2 @@
-Drunk = {}
+Drunk.Player = {}
+Drunk.Players = {}

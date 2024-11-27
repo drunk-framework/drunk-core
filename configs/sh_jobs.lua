@@ -1,4 +1,4 @@
-Drunk.Jobs = {
+Drunk.Configs.Jobs = {
     ["police"] = {
         name = "police",
         label = "Los Santos Police Department",
