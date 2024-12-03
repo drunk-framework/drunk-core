@@ -1,1 +1,1 @@
-Drunk.Player = {}
+Drunk.LocalPlayer = {}
