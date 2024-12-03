@@ -1,4 +1,6 @@
-_KEY_BINDS = {
+Drunk.KeysHandlers = {}
+Drunk.KeysHandlers.RegisteredKeys= {}
+Drunk.KeysHandlers.KeyBinds = {
     KEYBOARD = {
         BACK = true,
         TAB = true,
@@ -137,11 +139,7 @@ _KEY_BINDS = {
 }
     
 function RegisterKey(layout, keyname, onpress, onrelease)
-    assert(type(layout) == 'string', 'Invalid Lua type, #1 argument expected string')
-    assert(type(keyname) == 'string', 'Invalid Lua type, #2 argument expected string')
-    assert(type(onpress) == 'function', 'Invalid Lua type, #3 argument expected function')
-    assert(onrelease ~= nil and type(onpress) == 'function' or true, 'Invalid Lua type, #4 argument expected function')
-    if _KEY_BINDS[layout:upper()] ~= nil and _KEY_BINDS[layout:upper()][keyname:upper()] ~= nil then
+    if Drunk.KeysHandlers.KeyBinds[layout:upper()] ~= nil and Drunk.KeysHandlers.KeyBinds[layout:upper()][keyname:upper()] ~= nil then
         layout, keyname = layout:lower(), keyname:lower()
         TriggerEvent('key:register', layout, keyname)
         AddEventHandler(('key:press:%s:%s'):format(layout, keyname), onpress)

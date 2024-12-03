@@ -1,9 +1,7 @@
-RegisteredKeys = {}
-
 AddEventHandler('key:register', function(layout, keyname)
-	if RegisteredKeys[layout] == nil then RegisteredKeys[layout] = {} end
-	if RegisteredKeys[layout][keyname] == nil then
-		RegisteredKeys[layout][keyname] = true
+	if Drunk.KeysHandlers.RegisteredKeys[layout] == nil then Drunk.KeysHandlers.RegisteredKeys[layout] = {} end
+	if Drunk.KeysHandlers.RegisteredKeys[layout][keyname] == nil then
+		Drunk.KeysHandlers.RegisteredKeys[layout][keyname] = true
 		RegisterKeyMapping(('+keypress %s %s'):format(layout, keyname), 'Binded '..keyname, layout:upper(), keyname:upper())
 	end
 end)
@@ -13,7 +11,7 @@ RegisterCommand('+keypress', function(s, args)
 	local keyname = args[2]
 	if layout and keyname then
 		layout, keyname = layout:lower(), keyname:lower()
-		if RegisteredKeys[layout] ~= nil and RegisteredKeys[layout][keyname] ~= nil then
+		if Drunk.KeysHandlers.RegisteredKeys[layout] ~= nil and Drunk.KeysHandlers.RegisteredKeys[layout][keyname] ~= nil then
 			TriggerEvent(('key:press:%s:%s'):format(layout, keyname))
 		end
 	end
@@ -24,7 +22,7 @@ RegisterCommand('-keypress', function(s, args)
 	local keyname = args[2]
 	if layout and keyname then
 		layout, keyname = layout:lower(), keyname:lower()
-		if RegisteredKeys[layout] ~= nil and RegisteredKeys[layout][keyname] ~= nil then
+		if Drunk.KeysHandlers.RegisteredKeys[layout] ~= nil and Drunk.KeysHandlers.RegisteredKeys[layout][keyname] ~= nil then
 			TriggerEvent(('key:release:%s:%s'):format(layout, keyname))
 		end
 	end
