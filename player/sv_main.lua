@@ -1,8 +1,8 @@
 Drunk.Player = {}
 Drunk.Players = {}
 
-Drunk.Player.Save = function(source)
-    local player = Drunk.Player.GetPlayer(source)
+Drunk.Player.Save = function(offline, source, player)
+    local player = offline == true and player or Drunk.Player.GetPlayer(source)
     if not player then
         return false
     end
@@ -56,8 +56,9 @@ Drunk.Player.Login = function(source, cid, data)
     end
 end
 
-Drunk.Player.LoadPlayer = function(source, data)
+Drunk.Player.LoadPlayer = function(source, data, offline)
     local self = {}
+    offline = offline or false
 
     self.Functions = {}
     self.char = data.char or {}
@@ -86,7 +87,9 @@ Drunk.Player.LoadPlayer = function(source, data)
     end
 
     function self.Functions.UpdateData()
-        TriggerClientEvent("Drunk:Core:Server:Client:UpdateData", self.source,self.Functions.ExtractData())
+        if not offline then
+            TriggerClientEvent("Drunk:Core:Server:Client:UpdateData", self.source,self.Functions.ExtractData())
+        end
     end
 
     function self.Functions.AddJob(job, grade)
@@ -138,7 +141,9 @@ Drunk.Player.LoadPlayer = function(source, data)
         if self.jobs[job] ~= nil then
             self.jobs[job].onDuty = duty
             self.Functions.UpdateData()
-            TriggerClientEvent("Drunk:Core:Server:Client:UpdateDuty", self.source, job, duty)
+            if not offline then
+                TriggerClientEvent("Drunk:Core:Server:Client:UpdateDuty", self.source, job, duty)
+            end
             return true
         else
             return false
@@ -222,13 +227,43 @@ Drunk.Player.LoadPlayer = function(source, data)
         return true
     end
 
-    Drunk.Players[source] = self
+    if not offline then
+        Drunk.Players[source] = self
+        TriggerClientEvent("Drunk:Core:Server:Client:LoadData", self.source, self.Functions.ExtractData()) 
+    end
 
-    TriggerClientEvent("Drunk:Core:Server:Client:LoadData", self.source, self.Functions.ExtractData())
-
-    return true
+    return self
 end
 
 Drunk.Player.GetPlayer = function(source)
     return Drunk.Players[source]
+end
+
+Drunk.Player.GetPlayers = function()
+    return Drunk.Players
+end
+
+Drunk.Player.GetPlayerOffline = function(citizenid)
+    if not citizenid then
+        return nil
+    end
+
+    local playerQuery = MySQL.prepare.await("SELECT * FROM players WHERE citizenid = ? AND license = ?",{
+        citizenid
+    })
+
+    if not playerQuery then
+        return nil
+    end
+
+    playerQuery.char = json.decode(playerQuery.char)
+    playerQuery.gang = json.decode(playerQuery.gang)
+    playerQuery.jobs = json.decode(playerQuery.jobs)
+    playerQuery.accounts = json.decode(playerQuery.accounts)
+    playerQuery.position = json.decode(playerQuery.position)
+    playerQuery.metadata = json.decode(playerQuery.metadata)
+
+    local player = Drunk.Player.LoadPlayer(nil, playerQuery, true)
+
+    return player
 end
